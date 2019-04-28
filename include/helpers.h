@@ -23,6 +23,40 @@ auto randint = [](int a, int b) {
 	return uniform_dist(el);
 };
 
+// Copy opencv Mat struct to c++ vector struct
+std::vector<std::vector<unsigned char>> cvMatToVecImage(const cv::Mat &img)
+{
+	assert(img.channels() == 1);
+
+	int rows = img.rows;
+	int cols = img.cols;
+
+	std::vector<unsigned char> row_image(cols, 0);
+	std::vector<std::vector<unsigned char>> dstImage(rows, row_image);
+
+	const unsigned char *data = img.data;
+
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			dstImage[i][j] = data[i*cols+j];
+
+	return dstImage;
+}
+
+// Convert c++ vector struct to opencv Mat
+cv::Mat vecImageToCvMat(const std::vector<std::vector<unsigned char>> &imgVec)
+{
+	int rows = imgVec.size();
+	int cols = imgVec[0].size();
+
+	cv::Mat dstImg = cv::Mat(rows, cols, CV_8UC1);
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			dstImg.data[i*cols+j] = imgVec[i][j];
+
+	return dstImg;
+}
+
 // Add salt noises to image
 cv::Mat addSaltNoise(const cv::Mat & srcImage, int n)
 {
