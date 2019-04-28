@@ -1,11 +1,13 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
+#include "helpers.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cmath>
-#include <random>
 
 using namespace std;
 
@@ -17,69 +19,10 @@ using namespace std;
 #define TEST_HISTOGRAM_EQUALIZE     1
 #define TEST_TRANSFORM              1
 
-// Helper function
-string GetMatType(const cv::Mat& mat)
-{
-    const int mtype = mat.type();
-
-    switch (mtype)
-    {
-    case CV_8UC1:  return "CV_8UC1";
-    case CV_8UC2:  return "CV_8UC2";
-    case CV_8UC3:  return "CV_8UC3";
-    case CV_8UC4:  return "CV_8UC4";
-
-    case CV_8SC1:  return "CV_8SC1";
-    case CV_8SC2:  return "CV_8SC2";
-    case CV_8SC3:  return "CV_8SC3";
-    case CV_8SC4:  return "CV_8SC4";
-
-    case CV_16UC1: return "CV_16UC1";
-    case CV_16UC2: return "CV_16UC2";
-    case CV_16UC3: return "CV_16UC3";
-    case CV_16UC4: return "CV_16UC4";
-
-    case CV_16SC1: return "CV_16SC1";
-    case CV_16SC2: return "CV_16SC2";
-    case CV_16SC3: return "CV_16SC3";
-    case CV_16SC4: return "CV_16SC4";
-
-    case CV_32SC1: return "CV_32SC1";
-    case CV_32SC2: return "CV_32SC2";
-    case CV_32SC3: return "CV_32SC3";
-    case CV_32SC4: return "CV_32SC4";
-
-    case CV_32FC1: return "CV_32FC1";
-    case CV_32FC2: return "CV_32FC2";
-    case CV_32FC3: return "CV_32FC3";
-    case CV_32FC4: return "CV_32FC4";
-
-    case CV_64FC1: return "CV_64FC1";
-    case CV_64FC2: return "CV_64FC2";
-    case CV_64FC3: return "CV_64FC3";
-    case CV_64FC4: return "CV_64FC4";
-
-    default:
-        return "Invalid type of matrix!";
-    }
-}
-
 int main()
 {
 	//cv::Mat img = cv::imread("lena_std.tif");
 	cv::Mat img = cv::imread("bird.png");
-
-	auto display_image = [](const string &name, const cv::Mat &img) {
-		cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
-		cv::imshow(name, img);
-	};
-
-	auto randint = [](int a, int b) {
-		random_device r;
-		default_random_engine el(r());
-		uniform_int_distribution<int> uniform_dist(a, b);
-		return uniform_dist(el);
-	};
 
 #if TEST_SECTION_FILTERS
 	// colored image
@@ -290,5 +233,7 @@ int main()
 	display_image("warp_image", img_warp);
 
 #endif
+	cv::destroyAllWindows();
+
 	return 0;
 }

@@ -1,17 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(CvTest)
+project(computer_vision_projects)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${PROJECT_SOURCE_DIR}/bin/)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin/)
+include_directories(${PROJECT_SOURCE_DIR}/include/)
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/main.cpp)
+add_subdirectory(${PROJECT_SOURCE_DIR}/01_basic_operations/)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-	${PROJECT_SOURCE_DIR}/include/
-	C:\\opencv\\opencv\\build\\include)
+add_subdirectory(${PROJECT_SOURCE_DIR}/02_median_blur/)
 
-target_link_libraries(${PROJECT_NAME} debug     C:\\opencv\\opencv\\build\\x64\\vc15\\lib\\opencv_world410d.lib)
-target_link_libraries(${PROJECT_NAME} optimized C:\\opencv\\opencv\\build\\x64\\vc15\\lib\\opencv_world410.lib)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
