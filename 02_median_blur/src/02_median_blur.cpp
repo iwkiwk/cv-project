@@ -35,31 +35,74 @@ vector<vector<unsigned char>> medianBlur(const vector<vector<unsigned char>>& im
 	int padTop = (int)((n-1)/2);
 	int padBottom = (n-1)-padTop;
 
-	vector<unsigned char> row_img(h+n-1, 0);
-	vector<vector<unsigned char>> dstImage(w+m-1, row_img);
+	vector<unsigned char> row_img(w+m-1, 0);
+	vector<vector<unsigned char>> dstImage(h+n-1, row_img);
+	vector<vector<unsigned char>> retImage(img);
 
 	switch (padding_way)
 	{
 	case Padding::ZERO:
-	{
-		for (int i = 0; i < w + m - 1; i++)
 		{
-			for (int j = 0; j < h + n - 1; j++)
+		for (int j = 0; j < h + n - 1; j++)
+		{
+			for (int i = 0; i < w + m - 1; i++)
 			{
 				if (i >= padLeft && i < (padLeft + w))
 					if (j >= padTop && j < (padTop + h))
-						dstImage[i][j] = img[i - padLeft][j - padTop];
+						dstImage[j][i] = img[j - padTop][i - padLeft];
 			}
 		}
-	}
-	break;
+		}
+		break;
 	case Padding::REPLICA:
+		{
+		for (int j = 0; j < h + n - 1; j++)
+			for (int i = 0; i < w + m - 1; i++)
+				if (i < padLeft)
+					if (j < padTop)
+						dstImage[j][i] = img[0][0];
+					else if (j >= padTop + h)
+						dstImage[j][i] = img[h - 1][0];
+					else
+						dstImage[j][i] = img[j - padTop][0];
+				else if (i >= (padLeft + w))
+					if (j < padTop)
+						dstImage[j][i] = img[0][w - 1];
+					else if (j >= padTop + h)
+						dstImage[j][i] = img[h - 1][w - 1];
+					else
+						dstImage[j][i] = img[j - padTop][w - 1];
+				else
+					if (j < padTop)
+						dstImage[j][i] = img[0][i - padLeft];
+					else if (j >= padTop + h)
+						dstImage[j][i] = img[h - 1][i - padLeft];
+					else
+						dstImage[j][i] = img[j - padTop][i - padLeft];
+		}
 		break;
 	default:
 		break;
 	}
 
-	return dstImage;
+	int *vec = new int[m*n];
+
+	for (int j = 0; j < h; j++)
+	{
+		for (int i = 0; i < w; i++)
+		{
+			for (int l = 0; l < n; l++)
+				for (int k = 0; k < m; k++)
+					vec[l*m + k] = dstImage[j + l][i + k];
+			double median = findMedian(vec, m*n);
+			assert(median < 256);
+			retImage[j][i] = (unsigned char)median;
+		}
+	}
+
+	delete[] vec;
+
+	return retImage;
 }
 
 int main()
@@ -72,12 +115,14 @@ int main()
 	cv::Mat saltImg = addSaltNoise(img, 10000);
 	display_image("salt_image", saltImg);
 
-	auto && imgVec = cvMatToVecImage(img);
+	auto && imgVec = cvMatToVecImage(saltImg);
 	debugMemPrint(&imgVec[0][0], 1, 0, 100);
 
-	auto && padZeroImage = medianBlur(imgVec, {100, 100}, Padding::ZERO);
+	auto && padZeroImage = medianBlur(imgVec, {3, 3}, Padding::ZERO);
+	auto && padReplicaImage = medianBlur(imgVec, {3, 3}, Padding::REPLICA);
 
-	cv::Mat padImg = vecImageToCvMat(padZeroImage);
+	cv::Mat padImgZ = vecImageToCvMat(padZeroImage);
+	cv::Mat padImgR = vecImageToCvMat(padReplicaImage);
 
 	//cv::waitKey(0);
 	//cv::destroyAllWindows();

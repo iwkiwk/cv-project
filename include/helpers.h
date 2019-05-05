@@ -6,6 +6,7 @@
 #include <random>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
 // Helper functions
 
@@ -219,3 +220,12 @@ void debugMemPrint(const void *data, unsigned eleByte, unsigned startIdx, unsign
 	std::cout << "\n";
 }
 
+double findMedian(int vec[], int n)
+{
+	std::sort(vec, vec+n);
+
+	if (n % 2 == 0)
+		return (double)vec[n/2];
+
+	return (double)(vec[(n-1)/2] + vec[n/2])/2.0;
+}
