@@ -85,6 +85,60 @@ arma::vec gradientDescent(const arma::mat & inputs, const arma::vec & targets, c
 	return params;
 }
 
+double calcPrecision(const arma::vec & target, const arma::vec & pred)
+{
+	assert(target.n_elem == pred.n_elem);
+
+	int TP = 0;
+	int FP = 0;
+	int TN = 0;
+	int FN = 0;
+
+	for (int i = 0; i < target.n_elem; i++)
+	{
+		if (pred(i) == 1)
+			if (target(i) == 1)
+				TP++;
+			else
+				FP++;
+		else
+			if (target(i) == 0)
+				TN++;
+			else
+				FN++;
+	}
+	if ((TP+FP) == 0)
+		return 0;
+	return TP*1.0/(TP+FP);
+}
+
+double calcRecall(const arma::vec & target, const arma::vec & pred)
+{
+	assert(target.n_elem == pred.n_elem);
+
+	int TP = 0;
+	int FP = 0;
+	int TN = 0;
+	int FN = 0;
+
+	for (int i = 0; i < target.n_elem; i++)
+	{
+		if (pred(i) == 1)
+			if (target(i) == 1)
+				TP++;
+			else
+				FP++;
+		else
+			if (target(i) == 0)
+				TN++;
+			else
+				FN++;
+	}
+	if ((TP+FP) == 0)
+		return 0;
+	return TP*1.0/(TP+FN);
+}
+
 double logisticLossFunc(const arma::vec & targets, const arma::vec & preds)
 {
 	assert(targets.n_rows == preds.n_rows);
@@ -133,9 +187,13 @@ void logisticGD(const arma::mat & inputs, arma::vec & params, const arma::mat & 
 		if (i % (int)(epochs/100) == 0)
 		{
 			double loss = logisticLossFunc(targets, preds);
+
+			arma::vec roundPreds = arma::round(preds);
+			double precision = calcPrecision(targets, roundPreds);
+			double recall = calcRecall(targets, roundPreds);
 			//targets.print("targets");
 			//preds.print("preds");
-			printf("epoch %d, loss %lf\n", i, loss);
+			printf("epoch %d, loss %lf, precision %lf, recall %lf\n", i, loss, precision, recall);
 		}
 
 		if (i == epochs)
@@ -191,10 +249,10 @@ int main()
 
 	int paramsN = irisData.n_cols - 2;
 	arma::vec params(paramsN);
-	int epochs = 10000;
+	int epochs = 100000;
 
 	arma::vec etas(paramsN);
-	etas.fill(0.01);
+	etas.fill(0.05);
 	arma::mat etaM(paramsN, paramsN);
 	etaM.fill(0);
 	for (int i = 0; i < paramsN; i++)
@@ -205,19 +263,19 @@ int main()
 	params = arma::randu<arma::vec>(paramsN);
 	dataM.cols(arma::span(0, 3)) = irisData.cols(arma::span(0, 3));
 	dataM.col(4) = irisData.col(4);
-	dataM = arma::shuffle(dataM); // shuffle data matrix
+	//dataM = arma::shuffle(dataM); // shuffle data matrix
 	logisticGD(dataM, params, etaM, epochs, "iris_results1.txt"); // 1st class
 
 	params = arma::randu<arma::vec>(paramsN);
 	dataM.cols(arma::span(0, 3)) = irisData.cols(arma::span(0, 3));
 	dataM.col(4) = irisData.col(5);
-	dataM = arma::shuffle(dataM);
+	//dataM = arma::shuffle(dataM);
 	logisticGD(dataM, params, etaM, epochs, "iris_results2.txt"); // 2nd class
 
 	params = arma::randu<arma::vec>(paramsN);
 	dataM.cols(arma::span(0, 3)) = irisData.cols(arma::span(0, 3));
 	dataM.col(4) = irisData.col(6);
-	dataM = arma::shuffle(dataM);
+	//dataM = arma::shuffle(dataM);
 	logisticGD(dataM, params, etaM, epochs, "iris_results3.txt"); // 3rd class
 	}
 #endif

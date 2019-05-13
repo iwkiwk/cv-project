@@ -11,4 +11,4 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/01_basic_operations/)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/02_median_blur/)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/03_linear_regression/)
+add_subdirectory(${PROJECT_SOURCE_DIR}/03_regression/)

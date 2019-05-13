@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(03_linear_regression)
+project(03_regression)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${PROJECT_SOURCE_DIR}/../bin/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/../bin/)
