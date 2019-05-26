@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <string>
 
 using namespace std;
 
@@ -87,12 +88,50 @@ int BFS(const Point & src, const Point & dest, int mat[ROW][COL])
 	return -1;
 }
 
+void backTrace(vector<string> & curList, vector<vector<string>> & res, int index, const vector<vector<string>> & word_candidates)
+{
+	if (curList.size() == word_candidates.size())
+	{
+		res.push_back(curList);
+	}
+	else
+	{
+		for (int i = 0; i < word_candidates[index].size(); i++)
+		{
+			curList.push_back(word_candidates[index][i]);
+			backTrace(curList, res, index + 1, word_candidates);
+			curList.pop_back();
+		}
+	}
+};
+
+void wordCombine(const vector<vector<string>> & word_candidates)
+{
+	vector<string> curList;
+	vector<vector<string>> res;
+
+	backTrace(curList, res, 0, word_candidates);
+
+	for (int i = 0; i < res.size(); i++)
+	{
+		for (int j = 0; j < res[i].size(); j++)
+		{
+			if (j != 0)
+				cout << " ";
+			cout << res[i][j];
+		}
+		cout << endl;
+	}
+}
+
 int main()
 {
 	Point source = { 8, 1, 0, {} };
 	Point dest   = { 1, 6, 0, {} };
+	cout << "steps: " << BFS(source, dest, maze) << endl;
 
-	cout << "steps: " << BFS(source, dest, maze);
+	vector<vector<string>> word_candidates({ {"I"}, {"am"}, {"happy", "glad", "good"}, {"and"}, {"sad", "sorrow"} });
+	wordCombine(word_candidates);
 
 	return 0;
 }
