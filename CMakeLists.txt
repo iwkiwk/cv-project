@@ -14,3 +14,6 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/02_median_blur/)
 add_subdirectory(${PROJECT_SOURCE_DIR}/03_regression/)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/04_kmeans/)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/05_graph_search/)
+
